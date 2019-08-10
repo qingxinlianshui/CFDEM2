@@ -1,0 +1,128 @@
+
+//   run_parallel_cfdemSolverPisoSTM_packedBedTemp_CFDDEM   //
+
+/home/tsimur/THESIS/TESTS/CAP_SURF/cap1surf1new/CFD
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 5.x-538044ac05c4
+Exec   : cfdemSolverPisoSTM -parallel
+Date   : Jan 23 2019
+Time   : 09:36:42
+Host   : "tsimur"
+PID    : 14852
+I/O    : uncollated
+Case   : /home/tsimur/THESIS/TESTS/CAP_SURF/cap1surf1new/CFD
+nProcs : 4
+Slaves : 
+3
+(
+"tsimur.14853"
+"tsimur.14854"
+"tsimur.14855"
+)
+
+Pstream initialized with:
+    floatTransfer      : 0
+    nProcsSimpleSum    : 0
+    commsType          : nonBlocking
+    polling iterations : 0
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+PISO: Operating solver in PISO mode
+
+Reading field p
+
+Reading physical velocity field U
+Note: only if voidfraction at boundary is 1, U is superficial velocity!!!
+
+
+Reading momentum exchange field Ksl
+
+
+Reading voidfraction field voidfraction = (Vgas/Vparticle)
+
+
+Creating density field rho
+
+Reading particle velocity field Us
+
+
+Creating fluid-particle heat flux field
+
+Reading/calculating face flux field phi
+
+Generating interstitial face flux field phiByVoidfraction
+
+Selecting incompressible transport model Newtonian
+[0] 
+[0] 
+[0] --> FOAM FATAL IO ERROR: 
+[0] keyword nu is undefined in dictionary "/home/tsimur/THESIS/TESTS/CAP_SURF/cap1surf1new/CFD/constant/transportProperties"
+[0] 
+[0] file: /home/tsimur/THESIS/TESTS/CAP_SURF/cap1surf1new/CFD/constant/transportProperties from line 18 to line 79.
+[0] 
+[0]     From function const Foam::entry& Foam::dictionary::lookupEntry(const Foam::word&, bool, bool) const
+[0]     in file db/dictionary/dictionary.C at line 566.
+[0] 
+FOAM parallel run exiting
+[0] 
+[1] 
+[1] 
+[1] --> FOAM FATAL IO ERROR: 
+[1] keyword nu is undefined in dictionary "IOstream"
+[1] 
+[1] file: IOstream from line 0 to line 0.
+[1] 
+[1]     From function const Foam::entry& Foam::dictionary::lookupEntry(const Foam::word&, bool, bool) const
+[1]     in file db/dictionary/dictionary.C at line 566.
+[1] 
+FOAM parallel run exiting
+[1] 
+[2] 
+[2] 
+[2] [3] 
+[3] 
+[3] --> FOAM FATAL IO ERROR: 
+[3] keyword nu is undefined in dictionary "IOstream"
+[3] 
+[3] file: IOstream from line 0 to line 0.
+[3] 
+[3]     From function const Foam::entry& Foam::dictionary::lookupEntry(const Foam::word&, bool, bool) const
+[3]     in file db/dictionary/dictionary.C at line 566.
+[3] 
+FOAM parallel run exiting
+[3] 
+--> FOAM FATAL IO ERROR: 
+[2] keyword nu is undefined in dictionary "IOstream"
+[2] 
+[2] file: IOstream from line 0 to line 0.
+[2] 
+[2]     From function const Foam::entry& Foam::dictionary::lookupEntry(const Foam::word&, bool, bool) const
+[2]     in file db/dictionary/dictionary.C at line 566.
+[2] 
+FOAM parallel run exiting
+[2] 
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 3 in communicator MPI_COMM_WORLD
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+[tsimur:14846] 3 more processes have sent help message help-mpi-api.txt / mpi-abort
+[tsimur:14846] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages

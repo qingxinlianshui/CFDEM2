@@ -1,0 +1,83 @@
+#!/bin/bash
+cd ${0%/*} || exit 1   # run from this directory
+
+targetDir=../OpenFOAM-${WM_PROJECT_VERSION}/applications/solvers/interFlow
+
+echo
+echo "Generating interFlow solver in OpenFOAM-${WM_PROJECT_VERSION}/applications/solvers/interFlow."
+echo
+
+#Find interFoam in $FOAM_SOLVERS and copy to targetDir
+sourceDir=$(dirname $(find "$FOAM_SOLVERS" -name "interFoam.C"))
+mkdir -p $targetDir/Make
+cp -n $sourceDir/Make/{files,options} $targetDir/Make/
+cp -n $sourceDir/{*.C,*.H} $targetDir/
+#Make sure you have write permission in the new solver dir
+chmod -R u+w $targetDir
+#From v1706/5.x VoF source is moved to separate directory which we copy to interFlow dir here
+if [ -d "${FOAM_SOLVERS}/multiphase/VoF" ]; then
+    echo "Copying files from ${FOAM_SOLVERS}/multiphase/VoF to $targetDir"
+    cp -n ${FOAM_SOLVERS}/multiphase/VoF/* $targetDir/
+    cp -n ${FOAM_SOLVERS}/multiphase/VoF/alphaEqn.H $targetDir/alphaEqnMULES.H
+else
+    cp -n ${FOAM_SOLVERS}/multiphase/interFoam/alphaEqn.H $targetDir/alphaEqnMULES.H
+fi
+
+#Append createIsoAdvection.H to createFields.H
+if [[ -z $(grep "createIsoAdvection.H" ${targetDir}/createFields.H) ]]; then
+    echo "Adding #include createIsoAdvection.H to createFields.H"
+    echo '#include "createIsoAdvection.H"' >> ${targetDir}/createFields.H
+fi
+
+#Appending nOuterCorrector implementation to alphaEqnSubCycle.H
+#Only doing it for later versions where alphaEqnSubCycle.H is inside pimple loop
+alphLinNum=$(grep -n 'alphaEqnSubCycle.H' ${targetDir}/interFoam.C | cut -d: -f1)
+pimpLinNum=$(grep -n 'pimple.loop()' ${targetDir}/interFoam.C | cut -d: -f1)
+if [[ -z $(grep "outerCorr already added" ${targetDir}/alphaEqnSubCycle.H) ]] && [[ "$alphLinNum" -gt "$pimpLinNum" ]]; then
+    echo "Adding outerCorr treatment to alphaEqnSubCycle.H"
+    cat ${targetDir}/alphaEqnSubCycle.H >> ${targetDir}/alphaEqnSubCycleStart.H
+    cat ${targetDir}/alphaEqnSubCycleEnd.H >> ${targetDir}/alphaEqnSubCycleStart.H
+    mv ${targetDir}/alphaEqnSubCycleStart.H ${targetDir}/alphaEqnSubCycle.H
+    rm ${targetDir}/alphaEqnSubCycleEnd.H
+else
+    rm ${targetDir}/alphaEqnSubCycleStart.H ${targetDir}/alphaEqnSubCycleEnd.H
+fi
+
+#Rename interFoam to interFlow
+mv -n ${targetDir}/interFoam.C ${targetDir}/interFlow.C
+rm ${targetDir}/interFoam.C
+grep -rl --exclude \*.dep --exclude-dir \*Include\* "interFoam" $targetDir | xargs sed -i "s/interFoam/interFlow/g"
+
+#Change FOAM_APPBIN and FOAM_LIBBIN to FOAM_USER_APPBIN and FOAM_USER_LIBBIN
+grep -rl --exclude \*.dep --exclude-dir \*Include\* "FOAM_APPBIN" $targetDir | xargs sed -i 's/FOAM_APPBIN/FOAM_USER_APPBIN/g'
+grep -rl --exclude \*.dep --exclude-dir \*Include\* "FOAM_LIBBIN" $targetDir | xargs sed -i 's/FOAM_LIBBIN/FOAM_USER_LIBBIN/g'
+
+#Insert isoAdvection.H as first header file in new solver
+if [[ -z $(grep "isoAdvection.H" ${targetDir}/interFlow.C) ]]; then
+    echo "Adding #include isoAdvection.H to interFlow.C"
+    sed -i '0,/#include.*$/s//#include "isoAdvection.H"\n&/' ${targetDir}/interFlow.C
+fi
+
+#Modify Make/options to include isoAdvector stuff
+if [[ -z $(grep "ISOADVECTION" ${targetDir}/Make/options) ]]; then
+    echo "Adding ISOADVECTION to Make/options"
+    sed -i '0,/EXE_INC.*$/s//&\n    -I$\(ISOADVECTION\)\/lnInclude \\/' ${targetDir}/Make/options
+fi
+if [[ -z $(grep "lisoAdvection" ${targetDir}/Make/options) ]]; then
+    echo "Adding -lisoAdvection to Make/options"
+    sed -i '0,/EXE_LIB.*$/s//&\n    -lisoAdvection \\/' ${targetDir}/Make/options
+fi
+if [[ -z $(grep "FOAM_USER_LIBBIN" ${targetDir}/Make/options) ]]; then
+    echo "Adding FOAM_USER_LIBBIN to Make/options"
+    sed -i '0,/EXE_LIB.*$/s//&\n    -L$\(FOAM_USER_LIBBIN\) \\/' ${targetDir}/Make/options
+fi
+
+#Replacing header
+source dhiFoamTools
+head -$(wc -l header | cut -f1 -d" ") $targetDir/interFlow.C > originalInterFlowHeader
+if [[ ! -z $(diff header originalInterFlowHeader) ]] ; then
+    echo "Replacing header in interFlow.C"
+    replaceHeader  ${targetDir}/interFlow.C
+fi
+rm originalInterFlowHeader
+rm ${targetDir}/whereOnEarthIsTheSolverCode

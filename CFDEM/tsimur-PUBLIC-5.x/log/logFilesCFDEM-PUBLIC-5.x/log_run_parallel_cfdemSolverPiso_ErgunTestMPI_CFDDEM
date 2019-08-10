@@ -1,0 +1,103 @@
+
+//   run_parallel_cfdemSolverPiso_ErgunTestMPI_CFDDEM   //
+
+/home/tsimur/THESIS/TESTS/39_reverse/CFD
+
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 5.x-538044ac05c4
+Exec   : cfdemSolverPiso -parallel
+Date   : Mar 03 2019
+Time   : 22:27:27
+Host   : "tsimur"
+PID    : 4068
+I/O    : uncollated
+Case   : /home/tsimur/THESIS/TESTS/39_reverse/CFD
+nProcs : 4
+Slaves : 
+3
+(
+"tsimur.4069"
+"tsimur.4070"
+"tsimur.4071"
+)
+
+Pstream initialized with:
+    floatTransfer      : 0
+    nProcsSimpleSum    : 0
+    commsType          : nonBlocking
+    polling iterations : 0
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+PISO: Operating solver in PISO mode
+
+Reading field p
+
+Reading physical velocity field U
+Note: only if voidfraction at boundary is 1, U is superficial velocity!!!
+
+
+Reading momentum exchange field Ksl
+
+
+Reading voidfraction field voidfraction = (Vgas/Vparticle)
+
+
+Creating density field rho
+
+Reading particle velocity field Us
+
+Reading/calculating face flux field phi
+
+Generating interstitial face flux field phiByVoidfraction
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type laminar
+Selecting laminar stress model Stokes
+No finite volume options present
+
+
+Reading g
+Selecting locateModel engine
+Selecting dataExchangeModel twoWayMPI
+Starting up LIGGGHTS for first time execution
+Executing input script '../DEM/in.liggghts_run'
+LIGGGHTS (Version LIGGGHTS-PUBLIC 3.8.0, compiled 2018-11-28-21:57:47 by root, git commit 28301df8853491784b1d8b90533ea89b8c6af1e8)
+log             ../DEM/log.liggghts
+thermo_log      ../DEM/post/thermo.txt
+
+atom_style      granular
+atom_modify     map array
+communicate     single vel yes
+
+boundary        m m m
+newton          off
+
+units           si
+processors      2 2 1
+
+# read the restart file
+read_restart    ../DEM/post/restart/liggghts.restart
+Reading restart file ...
+ERROR on proc 0: Cannot open restart file ../DEM/post/restart/liggghts.restart (../read_restart.cpp:153)
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI COMMUNICATOR 3 DUP FROM 0
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

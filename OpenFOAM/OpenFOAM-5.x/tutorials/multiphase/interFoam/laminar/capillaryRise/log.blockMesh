@@ -1,0 +1,75 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 5.x-538044ac05c4
+Exec   : blockMesh
+Date   : Apr 07 2019
+Time   : 16:12:53
+Host   : "tsimur"
+PID    : 19580
+I/O    : uncollated
+Case   : /home/tsimur/OpenFOAM/OpenFOAM-5.x/tutorials/multiphase/interFoam/laminar/capillaryRise
+nProcs : 1
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Deleting polyMesh directory
+    "/home/tsimur/OpenFOAM/OpenFOAM-5.x/tutorials/multiphase/interFoam/laminar/capillaryRise/constant/polyMesh"
+Creating block mesh from
+    "/home/tsimur/OpenFOAM/OpenFOAM-5.x/tutorials/multiphase/interFoam/laminar/capillaryRise/system/blockMeshDict"
+Creating block edges
+No non-planar block faces defined
+Creating topology blocks
+Creating topology patches
+
+Creating block mesh topology
+
+Check topology
+
+	Basic statistics
+		Number of internal faces : 0
+		Number of boundary faces : 6
+		Number of defined boundary faces : 6
+		Number of undefined boundary faces : 0
+	Checking patch -> block consistency
+
+Creating block offsets
+Creating merge list .
+
+Creating polyMesh from blockMesh
+Creating patches
+Creating cells
+Creating points with scale 0.001
+    Block 0 cell size :
+        i : 5e-05 .. 5e-05
+        j : 5e-05 .. 5e-05
+        k : 0.001 .. 0.001
+
+
+Writing polyMesh
+----------------
+Mesh Information
+----------------
+  boundingBox: (0 0 0) (0.001 0.02 0.001)
+  nPoints: 16842
+  nCells: 8000
+  nFaces: 32420
+  nInternalFaces: 15580
+----------------
+Patches
+----------------
+  patch 0 (start: 15580 size: 20) name: inlet
+  patch 1 (start: 15600 size: 20) name: atmosphere
+  patch 2 (start: 15620 size: 800) name: walls
+  patch 3 (start: 16420 size: 16000) name: frontAndBack
+
+End
+
